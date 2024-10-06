@@ -1,5 +1,5 @@
 // Connect to WebSocket server
-const socket = new WebSocket('ws:https://nk25719.github.io/PMD-Support/');
+const socket = new WebSocket('ws:http://192.168.1.9:5500/');
 
 // Handle incoming WebSocket messages (sensor updates)
 socket.onmessage = (event) => {
@@ -19,7 +19,7 @@ function sendEmergency(level) {
 
 // Fetch sensor data via HTTP request
 function fetchData() {
-    fetch('https://nk25719.github.io/PMD-Support/update')
+    fetch('http://192.168.1.9:5500/update')
         .then(response => response.json())
         .then(data => {
             document.getElementById('Value').innerText = 'Sensor Value: ' + data.value;
