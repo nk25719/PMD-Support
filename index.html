@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Control Panel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <img src="C:\Users\Laptop Pro\OneDrive\Pictures\Screenshots\Screenshot 2024-07-09 104940.png" alt="Medical Logo" class="medical-logo">
+    <h1>Krake's support</h1>
+    <h2>Display the data you're concerned about and send an alert when necessary.</h2>
+    <p id="Value">Sensor Value: -</p>
+    <p id="level">Emergency Level: -</p>
+
+    <div class="button-container">
+        <div class="emergency-buttons">
+            <button onclick="sendEmergency(0)">Emergency Level 0</button>
+            <button onclick="sendEmergency(1)">Emergency Level 1</button>
+            <button onclick="sendEmergency(2)">Emergency Level 2</button>
+            <button onclick="sendEmergency(3)">Emergency Level 3</button>
+            <button onclick="sendEmergency(4)">Emergency Level 4</button>
+            <button onclick="sendEmergency(5)">Emergency Level 5</button>
+        </div>
+        <div class="fetch-button">
+            <button onclick="fetchData()">Display Sensor Value</button>
+        </div>
+    </div>
+
+    <script>
+        function updateSensorValue(value) {
+            document.getElementById('Value').innerText = 'Sensor Value: ' + value;
+        }
+
+        function updateLevel(level) {
+            document.getElementById('level').innerText = 'Emergency Level: ' + level;
+        }
+
+        function fetchData() {
+            const serverAddress = 'http://192.168.1.9:5500/update?value';
+            
+            fetch(serverAddress)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.value !== undefined) {
+                        updateSensorValue(data.value);
+                    } else {
+                        console.error('Invalid data format:', data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+
+        function sendEmergency(level) {
+            const emergencyEndpoint = 'http://192.168.1.9:5500/emergency';
+
+            fetch(emergencyEndpoint, {
+                method: 'POST',
+                body: JSON.stringify({ level: level }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.level !== undefined) {
+                    updateLevel(data.level);
+                } else {
+                    console.error('Invalid data format:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Error sending emergency request:', error);
+            });
+        }
+    </script>
+</body>
+</html>
